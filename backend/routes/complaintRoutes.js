@@ -55,8 +55,14 @@ router.put(
       "email name"
     );
 
-    complaint.status = status;
-    await complaint.save();
+   complaint.status = status;
+
+  if (status === "Resolved") {
+    complaint.resolvedAt = new Date();
+  }
+
+  await complaint.save();
+
 
     // 🔥 SEND EMAIL
     sendEmail(
@@ -116,6 +122,7 @@ router.put(
   "/agent/update-status/:id",
   authMiddleware,
   async (req, res) => {
+
     if (req.user.role !== "agent") {
       return res.status(403).json("Agent access only");
     }
@@ -132,23 +139,30 @@ router.put(
     }
 
     complaint.status = status;
+
+    // ✅ STORE RESOLUTION TIME
+    if (status === "Resolved") {
+      complaint.resolvedAt = new Date();
+    }
+
     await complaint.save();
 
-    // 🔥 SEND EMAIL
     sendEmail(
       complaint.userId.email,
       "Complaint Status Updated",
       `Hello ${complaint.userId.name},
 
-Your complaint titled "${complaint.title}" is now marked as: ${status}.
+Your complaint "${complaint.title}" is now: ${status}
 
 Regards,
-Support Agent`
+Support Team`
     );
 
     res.json(complaint);
   }
 );
+
+
 
 
 

@@ -17,6 +17,8 @@ app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/complaints", require("./routes/complaintRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/messages", require("./routes/messageRoutes"));
+app.use("/api/analytics", require("./routes/analyticsRoutes"));
+
 
 // Socket.IO setup
 const io = new Server(server, {
